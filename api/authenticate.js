@@ -1,7 +1,4 @@
-const { MongoClient } = require('mongodb');
-const { secrets } = require('./notes/secrets');
-
-const MONGO_URI = secrets.mongo;
+// Authentication of browser client
 
 async function fetchOneAccountById(client, id) {
 	account = await client
@@ -13,21 +10,13 @@ async function fetchOneAccountById(client, id) {
 	throw `Dashboard.accounts: found no object with id '${id}'`;
 }
 
-const auth = async (accountId, log) => {
-	const uri = MONGO_URI;
-	const client = new MongoClient(uri, {
-		useNewUrlParser    : true,
-		useUnifiedTopology : true,
-	});
+const auth = async (client, log, accountId) => {
 	try {
-		await client.connect();
 		const result = await fetchOneAccountById(client, accountId);
 		return result;
 	} catch (e) {
 		log.error(e);
 		return false;
-	} finally {
-		await client.close();
 	}
 };
 

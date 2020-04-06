@@ -49,6 +49,13 @@ export const useSocket = (accountId, sessionId) => {
 				});
 				socket.on(events.AUTHENTICATED, function() {
 					setAuthentication(true);
+					// Immediately request maps collection
+					// TODO Here you will have to specify the map id for the hydration case
+					socket.emit(events.MAPS, {
+						mapId    : 'all',
+						pageNo   : 1,
+						oageSize : 25,
+					});
 				});
 				socket.on(events.DENIED, function(err) {
 					console.error('Authentication denied', err);
