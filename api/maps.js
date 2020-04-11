@@ -1,20 +1,29 @@
 // MAPs operations
 
-async function fetchMaps(client, request) {
-	data = await client.db('dashboard').collection('maps').find({}).toArray();
+// TODO this isn't good for a lot of maps b/c toArray()
+// loads all docs into memory
 
-	if (data) return data;
-	throw `Dashboard.maps: failed with request '${request}'`;
+async function fetchMaps(client, request) {
+    let response;
+    try {
+        response = await client
+            .collection(secrets.hive.collections.maps)
+            .find({})
+            .toArray();
+        if (response) return response;
+    } catch (err) {
+        throw `DB/maps: failed with ${request}, ${err}`;
+    }
 }
 
 const maps = async (client, log, request) => {
-	try {
-		const results = await fetchMaps(client, request);
-		return results;
-	} catch (e) {
-		log.error(e);
-		return false;
-	}
+    try {
+        const results = await fetchMaps(client, request);
+        return results;
+    } catch (e) {
+        log.error(e);
+        return false;
+    }
 };
 
 module.exports = maps;
